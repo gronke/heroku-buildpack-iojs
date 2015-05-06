@@ -28,14 +28,15 @@ node_version=$semver_range
 # Download io.js
 status "Downloading and installing io.js"
 version="2.0.0"
-iojs_url="https://iojs.org/dist/latest/iojs-v$version-linux-x64.tar.gz"
+version_string="iojs-v$version-linux-x64"
+iojs_url="https://iojs.org/dist/latest/$version_string.tar.gz"
 curl "$iojs_url" -s -o - | tar xzf - -C $build_dir
 
 # Move node (and npm) into ./vendor and make them executable
 mkdir -p $build_dir/vendor
-mv $build_dir/iojs $build_dir/vendor/node
-chmod +x $build_dir/vendor/node/bin/*
-PATH=$build_dir/vendor/node/bin:$PATH
+mv $build_dir/$version_string $build_dir/vendor/iojs
+chmod +x $build_dir/vendor/iojs/bin/*
+PATH=$build_dir/vendor/iojs/bin:$PATH
 
 # Run subsequent node/npm commands from the build path
 cd $build_dir
@@ -121,7 +122,7 @@ fi
 # Update the PATH
 status "Building runtime environment"
 mkdir -p $build_dir/.profile.d
-echo "export PATH=\"\$HOME/vendor/node/bin:\$HOME/bin:\$HOME/node_modules/.bin:\$PATH\";" > $build_dir/.profile.d/nodejs.sh
+echo "export PATH=\"\$HOME/vendor/iojs/bin:\$HOME/bin:\$HOME/node_modules/.bin:\$PATH\";" > $build_dir/.profile.d/nodejs.sh
 
 # Post package.json to nomnom service
 # Use a subshell so failures won't break the build.
